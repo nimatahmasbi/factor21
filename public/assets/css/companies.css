@@ -1,0 +1,10 @@
+.company-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.company-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:0 3px 14px #17203308;display:flex;flex-direction:column;gap:13px}
+.company-card.active{border-color:var(--primary);box-shadow:0 0 0 3px #2563eb12}
+.company-card-head{display:flex;align-items:center;gap:12px}
+.company-logo{width:52px;height:52px;border-radius:12px;border:1px solid var(--line);object-fit:contain;background:#f8fafc;padding:4px}
+.company-logo-placeholder{display:grid;place-items:center;background:#eff6ff;color:#1d4ed8;font-size:20px;font-weight:800}
+.company-card h3{margin:0 0 4px;font-size:16px}.company-card p{margin:0;color:var(--muted);line-height:1.8}.company-card-actions{display:flex;gap:8px;margin-top:auto;flex-wrap:wrap}.active-company-label{font-size:11px;color:#166534;background:#dcfce7;padding:4px 8px;border-radius:20px}
+@media(max-width:1050px){.company-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.company-grid{grid-template-columns:1fr}}
+.items-table .item-results{position:fixed;inset:auto;z-index:250;max-height:280px}.result-empty{cursor:default;color:var(--muted)}

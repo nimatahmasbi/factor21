@@ -1,0 +1,1 @@
+<?php return ['app_name'=>'My Proforma','login_title'=>'Secure sign in','mobile'=>'Mobile number','send_code'=>'Send verification code','verify'=>'Sign in','new_quote'=>'New proforma','quotes'=>'Proformas','companies'=>'Companies','customers'=>'Customers','catalog'=>'Products & services','settings'=>'Settings','logout'=>'Logout'];
