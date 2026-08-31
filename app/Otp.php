@@ -32,11 +32,16 @@ final class Otp {
         if($raw===false||$status!==200||!($decoded['meta']['status']??false)){error_log('IPPanel send failed status='.$status.' error='.$err);return[false,'ارسال پیامک انجام نشد. دوباره تلاش کنید.'];}
         return[true,'کد تأیید ارسال شد.'];
     }
-    public static function verify(string $mobile,string $code):array {
+    public static function verifyOnly(string $mobile,string $code):array {
         $mobile=self::normalize($mobile);if(!$mobile||!preg_match('/^\d{6}$/',$code))return[false,'اطلاعات واردشده معتبر نیست.'];
         $row=DB::one('SELECT * FROM otp_codes WHERE mobile=? AND used_at IS NULL AND expires_at>NOW() ORDER BY id DESC LIMIT 1',[$mobile]);
         if(!$row||(int)$row['attempts']>=5||!password_verify($code,$row['code_hash'])){if($row)DB::exec('UPDATE otp_codes SET attempts=attempts+1 WHERE id=?',[$row['id']]);return[false,'کد تأیید نادرست یا منقضی شده است.'];}
-        DB::exec('UPDATE otp_codes SET used_at=NOW() WHERE id=?',[$row['id']]);$user=DB::one('SELECT id FROM users WHERE mobile=?',[$mobile]);
+        DB::exec('UPDATE otp_codes SET used_at=NOW() WHERE id=?',[$row['id']]);
+        return[true,'کد تأیید شد.'];
+    }
+    public static function verify(string $mobile,string $code):array {
+        [$ok,$message]=self::verifyOnly($mobile,$code);if(!$ok)return[$ok,$message];
+        $mobile=self::normalize($mobile);$user=DB::one('SELECT id FROM users WHERE mobile=?',[$mobile]);
         if(!$user){DB::exec('INSERT INTO users(mobile)VALUES(?)',[$mobile]);$id=(int)DB::pdo()->lastInsertId();}else $id=(int)$user['id'];
         Auth::login($id);return[true,'ورود موفق بود.'];
     }

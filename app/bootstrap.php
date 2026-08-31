@@ -34,3 +34,18 @@ function t(string $key): string { static $l; $l ??= require __DIR__ . '/../resou
 function csrf_token(): string { return $_SESSION['csrf'] ??= bin2hex(random_bytes(32)); }
 function json_input(): array { $v = json_decode(file_get_contents('php://input') ?: '{}', true); return is_array($v) ? $v : []; }
 function json_response(array $data, int $status = 200): never { http_response_code($status); header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store'); echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); exit; }
+function amount_to_words_fa(float $amount): string {
+    $ones=['','یک','دو','سه','چهار','پنج','شش','هفت','هشت','نه'];$teens=['ده','یازده','دوازده','سیزده','چهارده','پانزده','شانزده','هفده','هجده','نوزده'];
+    $tens=['','ده','بیست','سی','چهل','پنجاه','شصت','هفتاد','هشتاد','نود'];$hundreds=['','صد','دویست','سیصد','چهارصد','پانصد','ششصد','هفتصد','هشتصد','نهصد'];$scales=['','هزار','میلیون','میلیارد','تریلیون'];
+    $n=(int)floor(abs($amount));if($n===0)return'صفر';
+    $three=function(int $num)use($ones,$teens,$tens,$hundreds):string{
+        $h=intdiv($num,100);$t=intdiv($num%100,10);$o=$num%10;$parts=[];
+        if($h)$parts[]=$hundreds[$h];
+        if($t===1)$parts[]=$teens[$o];else{if($t)$parts[]=$tens[$t];if($o)$parts[]=$ones[$o];}
+        return implode(' و ',$parts);
+    };
+    $groups=[];while($n>0){array_unshift($groups,$n%1000);$n=intdiv($n,1000);}
+    $words=[];$count=count($groups);
+    foreach($groups as $i=>$g){if(!$g)continue;$scale=$scales[$count-1-$i]??'';$words[]=trim($three($g).($scale?' '.$scale:''));}
+    return implode(' و ',$words);
+}
